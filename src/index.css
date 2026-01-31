@@ -2,175 +2,158 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: 'Outfit', 'Poppins', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: dark;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
-  /* Enchanted Palette */
-  --color-void: #020617;
-  --color-obsidian: #0f172a;
-  --color-emerald: #10b981;
-  --color-amethyst: #a855f7;
-  --color-moonstone: #94a3b8;
-  --color-gold: #fbbf24;
-  --color-crimson: #ef4444;
+:root {
+  font-family: 'Quicksand', sans-serif;
+  line-height: 1.5;
+  font-weight: 500;
+
+  /* Neo-Brutalist Pastel Palette */
+  --bg-main: #ffffff;
+  --text-main: #1a1a1a;
+
+  --neo-pink: #ffa8e0;
+  --neo-blue: #a8d5ff;
+  --neo-green: #a8ffb5;
+  --neo-yellow: #fffda8;
+  --neo-purple: #dca8ff;
+
+  --pastel-pink: #ffe6f2;
+  --pastel-blue: #e6f2ff;
+  --pastel-green: #e6fff0;
+  --pastel-yellow: #ffffe6;
+  --pastel-purple: #f2e6ff;
+
+  /* Brutalist Borders */
+  --border-width: 3px;
+  --border-color: #1a1a1a;
+
+  /* Mix of Hard & Soft Shadows */
+  --shadow-neo: 5px 5px 0px 0px var(--border-color);
+  --shadow-neo-sm: 3px 3px 0px 0px var(--border-color);
+  --shadow-neo-lg: 8px 8px 0px 0px var(--border-color);
+
+  /* Soft Overlays */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.8);
 }
 
 body {
-  margin: 0;
-  background-color: var(--color-void);
-  color: var(--color-moonstone);
-  min-height: 100vh;
-  cursor: none !important;
-  overflow-x: hidden;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   background-image:
-    radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 10% 20%, rgba(255, 168, 224, 0.2) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(168, 213, 255, 0.2) 0%, transparent 20%),
+    radial-gradient(circle at 50% 50%, rgba(168, 255, 181, 0.1) 0%, transparent 40%);
+  background-attachment: fixed;
+  overflow-x: hidden;
 }
 
-#root {
-  width: 100%;
+/* Neo-Brutalist + Soft UI Component Classes */
+.neo-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-neo);
+  border-radius: 1.5rem;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Magical Textures */
-.enchanted-glass {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+.neo-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px 0px var(--border-color);
 }
 
-.text-mystic {
-  background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-amethyst) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+.neo-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
-.glow-emerald {
-  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+.neo-btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1.5rem;
+  border: var(--border-width) solid var(--border-color);
+  background: white;
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: 1rem;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.glow-amethyst {
-  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+.neo-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px 0px var(--border-color);
 }
 
-/* Animations */
-@keyframes wand-beam {
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px var(--border-color);
+}
+
+.neo-input {
+  border: var(--border-width) solid var(--border-color);
+  background: white;
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.neo-input:focus {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+  border-left: var(--border-width) solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neo-purple);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 99px;
+}
+
+/* Animations included from previous Step */
+@keyframes float {
   0% {
-    transform: scaleX(0);
-    opacity: 0;
+    transform: translateY(0px);
   }
 
   50% {
-    opacity: 1;
+    transform: translateY(-10px);
   }
 
   100% {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-
-@keyframes float-ethereal {
-
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(1deg);
-  }
-}
-
-@keyframes pulse-aura {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.3;
-  }
-
-  50% {
-    transform: scale(1.1);
-    opacity: 0.5;
-  }
-}
-
-@keyframes spin-ethereal {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
+    transform: translateY(0px);
   }
 }
 
 .animate-float {
-  animation: float-ethereal 6s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
-.animate-aura {
-  animation: pulse-aura 4s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-ethereal 15s linear infinite;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-void);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, var(--color-emerald), var(--color-amethyst));
-  border-radius: 10px;
-}
-
-.parchment-glow {
-  position: relative;
-}
-
-.parchment-glow::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(168, 85, 247, 0.2));
-  z-index: -1;
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.parchment-glow:hover::before {
-  opacity: 1;
-}
-
-/* Custom Timer Slider Styling */
-input[type="range"] {
-  -webkit-appearance: none;
-  background: rgba(255, 255, 255, 0.05);
-  height: 4px;
-  border-radius: 5px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--color-emerald);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 10px var(--color-emerald);
+/* Easter Egg: Confetti Canvas (kept for reference if needed) */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
 }

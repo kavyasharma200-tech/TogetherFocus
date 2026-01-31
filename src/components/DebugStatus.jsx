@@ -43,17 +43,17 @@ const DebugStatus = () => {
     }, []);
 
     return (
-        <div className="fixed bottom-4 left-4 bg-black/90 text-white p-4 rounded-lg text-xs font-mono border border-white/20 z-[9999] max-w-lg pointer-events-none">
-            <h3 className="font-bold border-b border-white/20 mb-2 pb-1">Debug Info</h3>
+        <div className="fixed bottom-4 left-4 bg-white p-4 rounded-xl text-[10px] font-bold border-2 border-black shadow-neo-sm z-[9999] max-w-lg pointer-events-none">
+            <h3 className="font-black border-b-2 border-black mb-2 pb-1 uppercase tracking-widest">Debug Info</h3>
             <div>App Status: {status}</div>
             <div>DB Status: {dbStatus}</div>
-            <div className="mt-2 text-red-400 font-bold">
-                {authError ? `Last Auth Error: ${authError}` : ''}
+            <div className="mt-2 text-neo-pink font-black uppercase">
+                {authError ? `Auth Error: ${authError}` : ''}
             </div>
-            <div className="text-green-400">
-                {user ? `User: ${user.email}` : 'User: Not Logged In'}
+            <div className="text-neo-blue font-black uppercase">
+                {user ? `User: ${user.email}` : 'User: Offline'}
             </div>
-            <div className="mt-2 opacity-50">
+            <div className="mt-2 border-t border-black border-dashed pt-2">
                 <div>Project: {config.projectId}</div>
             </div>
         </div>
