@@ -3,9 +3,9 @@ import { MessageCircle, X, Send, Sparkles, Bot, User, Wand2 } from 'lucide-react
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const GEMINI_API_KEY = 'AIzaSyB8nwpiEhr3MIqmFh80iw5RsvurnjM1b3E';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 // Using the simpler v1beta URL for broad compatibility
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
 
 const SYSTEM_PROMPT = `You are "The Oracle of Focus", an AI assistant for the "Together Focus" website. 
 The website is a magical, wizard-themed productivity platform. 
@@ -17,7 +17,7 @@ Key features you should know:
 - Shared Timer (up to 12 hours)
 - Shared Registry of Intent (Planner)
 - Owl Post (Chat between partners)
-- Enchanted Environments (Forbidden Forest, Astronomy Tower)
+- Enchanted Environments (Pastel Park, Cozy Corner)
 - Ministry Decree: If any one person leaves a room, the timer resets to 0.`;
 
 const GeminiChatbot = () => {
@@ -48,8 +48,8 @@ const GeminiChatbot = () => {
         setIsLoading(true);
 
         try {
-            // Prepare history for API
-            const history = updatedMessages.map(m => ({
+            // Prepare history for API (Skip the initial greeting to avoid 'User must start' error)
+            const apiHistory = updatedMessages.filter((_, index) => index > 0).map(m => ({
                 role: m.role,
                 parts: [{ text: m.content }]
             }));
@@ -58,7 +58,7 @@ const GeminiChatbot = () => {
                 systemInstruction: {
                     parts: [{ text: SYSTEM_PROMPT }]
                 },
-                contents: history,
+                contents: apiHistory,
                 generationConfig: {
                     maxOutputTokens: 500,
                     temperature: 0.8,
@@ -96,44 +96,44 @@ const GeminiChatbot = () => {
                         initial={{ opacity: 0, scale: 0.8, y: 50 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                        className="mb-6 w-80 md:w-96 h-[500px] enchanted-glass rounded-[3rem] flex flex-col overflow-hidden border border-emerald-500/30 shadow-[0_0_80px_rgba(16,185,129,0.3)]"
+                        className="mb-6 w-80 md:w-96 h-[500px] neo-card bg-white flex flex-col overflow-hidden shadow-neo"
                     >
                         {/* Header */}
-                        <div className="p-6 bg-emerald-500/10 border-b border-white/5 flex justify-between items-center">
+                        <div className="p-4 bg-neo-green border-b-2 border-black flex justify-between items-center">
                             <div className="flex items-center gap-3">
-                                <Bot className="w-5 h-5 text-emerald-400" />
-                                <h3 className="text-xs font-bold text-white uppercase tracking-widest">The Oracle</h3>
+                                <Bot className="w-5 h-5 text-black" />
+                                <h3 className="text-xs font-black text-black uppercase tracking-widest">The Oracle</h3>
                             </div>
-                            <button onClick={() => setIsOpen(false)}><X className="w-5 h-5 text-moonstone/40 hover:text-white" /></button>
+                            <button onClick={() => setIsOpen(false)}><X className="w-5 h-5 text-black hover:scale-110 transition-transform" /></button>
                         </div>
 
                         {/* Messages */}
-                        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4">
+                        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
                             {messages.map((m, i) => (
                                 <div key={i} className={clsx("flex", m.role === 'user' ? "justify-end" : "justify-start")}>
                                     <div className={clsx(
-                                        "max-w-[85%] p-4 rounded-2xl text-[13px] leading-relaxed",
+                                        "max-w-[85%] p-3 rounded-xl text-sm font-bold border-2 border-black shadow-sm",
                                         m.role === 'user'
-                                            ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-100 rounded-tr-none"
-                                            : "bg-white/5 border border-white/10 text-moonstone rounded-tl-none"
+                                            ? "bg-neo-blue text-black rounded-tr-none"
+                                            : "bg-white text-black rounded-tl-none"
                                     )}>
                                         {m.content}
                                     </div>
                                 </div>
                             ))}
-                            {isLoading && <div className="text-[10px] text-emerald-500/50 uppercase tracking-widest animate-pulse ml-2">Consulting the scroll...</div>}
+                            {isLoading && <div className="text-[10px] text-gray-400 uppercase tracking-widest animate-pulse ml-2 font-bold">Consulting the scroll...</div>}
                         </div>
 
                         {/* Form */}
-                        <form onSubmit={handleSend} className="p-6 bg-black/20 border-t border-white/5 flex gap-2">
+                        <form onSubmit={handleSend} className="p-4 bg-white border-t-2 border-black flex gap-2">
                             <input
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Whisper..."
-                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white"
+                                className="flex-1 neo-input py-2 text-xs"
                             />
-                            <button type="submit" disabled={isLoading} className="p-3 bg-emerald-500 rounded-xl text-void shadow-lg">
-                                <Send className="w-4 h-4" />
+                            <button type="submit" disabled={isLoading} className="p-2 bg-neo-green rounded-xl border-2 border-black hover:bg-green-400 transition-colors shadow-neo-sm">
+                                <Send className="w-5 h-5 text-black" />
                             </button>
                         </form>
                     </motion.div>
@@ -144,12 +144,13 @@ const GeminiChatbot = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center text-void shadow-[0_0_30px_rgba(16,185,129,0.5)] z-10 relative"
+                className="w-16 h-16 bg-neo-green rounded-full flex items-center justify-center border-3 border-black shadow-neo z-10 relative"
             >
-                <Bot className="w-8 h-8" />
+                <Bot className="w-8 h-8 text-black" />
             </motion.button>
         </div>
     );
 };
 
 export default GeminiChatbot;
+

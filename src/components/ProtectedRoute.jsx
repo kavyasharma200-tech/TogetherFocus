@@ -9,12 +9,12 @@ const ProtectedRoute = ({ children }) => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0d0b1a] flex flex-col items-center justify-center gap-6">
+            <div className="min-h-screen bg-neo-yellow flex flex-col items-center justify-center gap-6">
                 <div className="relative">
-                    <div className="w-16 h-16 border-2 border-[#d4af37]/20 border-t-[#d4af37] rounded-full animate-spin" />
-                    <Sparkles className="absolute inset-0 m-auto w-6 h-6 text-[#d4af37] animate-pulse" />
+                    <div className="w-20 h-20 border-4 border-black border-t-transparent rounded-full animate-spin" />
+                    <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-black" />
                 </div>
-                <p className="text-[#d4af37] font-mono text-xs uppercase tracking-[0.5em] animate-pulse">Unveiling the Realm...</p>
+                <p className="text-black font-black text-sm uppercase tracking-widest animate-pulse">Consulting the Oracle...</p>
             </div>
         );
     }

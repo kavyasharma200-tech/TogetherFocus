@@ -4,10 +4,11 @@ import useRoomStore from '../store/useRoomStore';
 import useAuthStore from '../store/useAuthStore';
 import usePlannerStore from '../store/usePlannerStore';
 import Environment from '../components/room/Environment';
-import { Play, Pause, RotateCcw, MessageCircle, Settings, LogOut, Copy, Check, ArrowRight, Sparkles, Calendar, Trash2, Wand2, BookOpen, Clock, LayoutGrid, Timer as TimerIcon, Plus, AlertTriangle, Send, User as UserIcon } from 'lucide-react';
+import { Play, Pause, RotateCcw, MessageCircle, Settings, LogOut, Copy, Check, ArrowRight, Sparkles, Calendar, Trash2, Wand2, BookOpen, Clock, LayoutGrid, Timer as TimerIcon, Plus, AlertTriangle, Send, User as UserIcon, Coffee, Sun, Zap } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import ZenFlare from '../components/ZenFlare';
 
 const Room = () => {
     const { roomId } = useParams();
@@ -22,11 +23,12 @@ const Room = () => {
     const memberCount = Object.keys(members).length;
 
     const [localTimeRemaining, setLocalTimeRemaining] = useState(25 * 60);
-    const [showSettings, setShowSettings] = useState(false);
+    const [showChat, setShowChat] = useState(true);
     const [chatInput, setChatInput] = useState('');
     const [taskInput, setTaskInput] = useState('');
     const [customMinutes, setCustomMinutes] = useState(25);
-    const [showChat, setShowChat] = useState(true);
+    const [flareActive, setFlareActive] = useState(false);
+    const [flareCount, setFlareCount] = useState(0);
 
     const chatEndRef = useRef(null);
 
@@ -67,7 +69,7 @@ const Room = () => {
 
     const handleStart = () => {
         if (!isHost && !currentRoom.settings?.allowPartnerControl) {
-            toast.error("Under Ministry decree, only the Host may cast the timer.");
+            toast.error("Only the host can control the session.");
             return;
         }
         updateSessionState(roomId, {
@@ -110,11 +112,11 @@ const Room = () => {
             startTime: null
         });
         setLocalTimeRemaining(seconds);
-        toast.success(`Time Turner set to ${Math.floor(minutes / 60)}h ${minutes % 60}m`);
+        toast.success(`Session set to ${Math.floor(minutes / 60)}h ${minutes % 60}m`);
     };
 
     const handleComplete = () => {
-        if (isHost) toast.success("Focus Session Complete! ✨");
+        if (isHost) toast.success("Session Complete! Great work! ✨");
     };
 
     const handleSendMessage = (e) => {
@@ -122,6 +124,24 @@ const Room = () => {
         if (!chatInput.trim()) return;
         sendMessage(roomId, user, chatInput);
         setChatInput('');
+    };
+
+    const triggerFlare = () => {
+        setFlareCount(prev => prev + 1);
+        if (flareCount + 1 >= 7) {
+            setFlareActive(true);
+            setFlareCount(0);
+            toast.success("Zen Burst! ✨", {
+                duration: 4000,
+                style: {
+                    borderRadius: '20px',
+                    background: 'white',
+                    color: '#333',
+                    fontWeight: 'bold',
+                    boxShadow: '5px 5px 0px 0px #000'
+                }
+            });
+        }
     };
 
     const formatTime = (seconds) => {
@@ -139,116 +159,128 @@ const Room = () => {
         return `${m}m`;
     };
 
-    if (!currentRoom) return <div className="min-h-screen bg-[#020617] flex items-center justify-center text-emerald-400 font-mono italic tracking-[0.5em] animate-pulse">Summoning Realm...</div>;
+    if (!currentRoom) return <div className="min-h-screen flex items-center justify-center font-black text-2xl animate-bounce">Loading Space...</div>;
 
     return (
-        <div className="min-h-screen bg-[#020617] text-moonstone selection:bg-emerald-500/20">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 enchanted-glass border-b border-white/5 p-4 flex justify-between items-center backdrop-blur-xl">
-                <div className="flex items-center gap-6">
-                    <button onClick={() => navigate('/')} className="p-2 hover:bg-white/5 rounded-xl transition-all cursor-none">
-                        <LayoutGrid className="w-5 h-5 text-emerald-400" />
-                    </button>
-                    <div className="h-6 w-[1px] bg-white/10" />
+        <div className="min-h-screen bg-white text-main font-quicksand relative">
+            <ZenFlare active={flareActive} onComplete={() => setFlareActive(false)} />
 
-                    {/* Assembly Members (up to 4) */}
-                    <div className="flex items-center gap-2">
-                        <div className="flex -space-x-3 mr-4">
+            {/* Header */}
+            <header className="fixed top-4 left-4 right-4 z-50 neo-card bg-white p-4 flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => navigate('/')} className="neo-btn bg-neo-pink p-3">
+                        <LayoutGrid className="w-5 h-5 text-black" />
+                    </button>
+                    <div className="h-8 w-[2px] bg-black mx-2 hidden md:block" />
+
+                    {/* Members */}
+                    <div className="flex items-center gap-3">
+                        <div className="flex -space-x-3">
                             {Object.values(members).map((member, i) => (
                                 <motion.div
                                     key={i}
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
                                     className={clsx(
-                                        "w-10 h-10 rounded-full border-2 border-void flex items-center justify-center text-void font-bold text-xs shadow-lg relative",
-                                        member.online ? "bg-emerald-500" : "bg-slate-700 text-moonstone/40"
+                                        "w-10 h-10 rounded-full border-2 border-black flex items-center justify-center font-black text-xs relative",
+                                        member.online ? "bg-neo-green text-black" : "bg-gray-300 text-gray-500"
                                     )}
-                                    title={`${member.name} (${member.online ? 'Online' : 'Offline'})`}
                                 >
                                     {member.name.charAt(0)}
                                     <div className={clsx(
-                                        "absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-void",
-                                        member.online ? "bg-emerald-400 animate-pulse" : "bg-slate-500"
+                                        "absolute bottom-0 right-0 w-3 h-3 rounded-full border border-black",
+                                        member.online ? "bg-green-500" : "bg-red-500"
                                     )} />
                                 </motion.div>
                             ))}
-                            {[...Array(4 - memberCount)].map((_, i) => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-dashed border-white/10 bg-white/5 flex items-center justify-center text-moonstone/10 font-bold text-xs" />
-                            ))}
                         </div>
-                        <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-moonstone/30">
-                            {memberCount}/4 Wizards Present
+                        <span className="text-xs uppercase font-black tracking-widest hidden md:block">
+                            {memberCount} active souls
                         </span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button onClick={() => { navigator.clipboard.writeText(currentRoom.roomCode); toast.success("Code copied!"); }} className="hidden sm:flex bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-xs font-mono font-bold hover:border-emerald-500/30 transition-all items-center gap-2 cursor-none">
+                    <button onClick={() => { navigator.clipboard.writeText(currentRoom.roomCode); toast.success("Copied!"); }} className="hidden sm:flex bg-neo-blue px-4 py-2 rounded-xl text-xs font-black border-2 border-black shadow-neo-sm items-center gap-2 hover:translate-y-1 hover:shadow-none transition-all">
                         {currentRoom.roomCode}
-                        <Copy className="w-3 h-3 text-moonstone/40" />
+                        <Copy className="w-3 h-3" />
                     </button>
                     <button
                         onClick={() => leaveRoom(roomId, user.uid).then(() => navigate('/'))}
-                        className="p-2 hover:bg-red-500/10 rounded-xl transition-all text-red-400/40 hover:text-red-400 cursor-none"
+                        className="neo-btn bg-red-400 p-3 hover:bg-red-500"
                     >
-                        <LogOut className="w-5 h-5" />
+                        <LogOut className="w-5 h-5 text-black" />
                     </button>
                 </div>
             </header>
 
-            <main className="pt-24 px-4 md:px-12 pb-32">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 md:gap-12">
+            <main className="pt-28 px-4 md:px-12 pb-32">
+                <div className="max-w-[1600px] mx-auto grid lg:grid-cols-12 gap-8 md:gap-12">
                     {/* Environment & Timer */}
                     <div className="lg:col-span-8 space-y-8 md:space-y-12">
-                        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden group shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5 h-[350px] md:h-[500px]">
-                            <Environment type={session?.environment || 'garden'} sessionState={session} />
-                            <div className="absolute inset-x-0 bottom-0 p-8 md:p-12 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent flex justify-center items-end h-full">
-                                <div className="text-center group-hover:scale-105 transition-transform duration-1000">
+                        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative rounded-[3rem] overflow-hidden group neo-card bg-white h-[400px] md:h-[550px]">
+                            {/* Environment Placeholder until refactored, assuming it handles its own visuals but layering Neo frame around it */}
+                            <div className="absolute inset-0">
+                                <Environment type={session?.environment || 'garden'} sessionState={session} />
+                            </div>
+
+                            <div className="absolute inset-0 pointer-events-none border-4 border-black rounded-[3rem] z-20" />
+
+                            <div className="absolute inset-x-0 bottom-0 p-12 flex justify-center items-end h-full z-30">
+                                <div onClick={triggerFlare} className="text-center cursor-pointer select-none">
                                     <motion.div
                                         animate={session?.isActive && !session?.isPaused ? {
-                                            filter: ["drop-shadow(0 0 0px #10b981)", "drop-shadow(0 0 30px #10b981)", "drop-shadow(0 0 0px #10b981)"]
+                                            scale: [1, 1.02, 1],
                                         } : {}}
                                         transition={{ repeat: Infinity, duration: 4 }}
                                         className={clsx(
-                                            "font-bold tracking-tighter transition-all leading-none selection:bg-none",
-                                            session?.isActive && !session?.isPaused ? "text-mystic text-[5rem] sm:text-[8rem] md:text-[12rem]" : "text-moonstone/10 text-[4rem] sm:text-[6rem] md:text-[10rem]"
+                                            "font-black tracking-tighter leading-none select-none drop-shadow-xl text-white text-outline-black",
+                                            session?.isActive && !session?.isPaused ? "text-[6rem] sm:text-[10rem] md:text-[13rem]" : "text-[5rem] sm:text-[8rem] md:text-[11rem] opacity-50"
                                         )}
+                                        style={{ textShadow: '4px 4px 0px #000' }}
                                     >
                                         {formatTime(localTimeRemaining)}
                                     </motion.div>
+                                    {session?.isActive && !session?.isPaused && (
+                                        <div className="mt-4 flex justify-center gap-2">
+                                            <div className="px-6 py-2 rounded-full bg-neo-green text-black border-2 border-black text-xs font-black uppercase tracking-widest shadow-neo-sm animate-pulse">Deep Flow Active</div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
 
-                        <div className="flex justify-center gap-6 md:gap-12 items-center">
-                            <motion.button whileHover={{ rotate: 180, scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleReset} className="p-4 md:p-5 rounded-full bg-white/5 border border-white/10 text-moonstone/40 hover:text-white transition-all cursor-none">
-                                <RotateCcw className="w-6 h-6 md:w-8 md:h-8" />
+                        <div className="flex justify-center gap-6 md:gap-10 items-center">
+                            <motion.button whileHover={{ rotate: -10, scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleReset} className="neo-btn bg-white p-5">
+                                <RotateCcw className="w-8 h-8" />
                             </motion.button>
+
                             {!session?.isActive || session.isPaused ? (
-                                <motion.button whileHover={{ scale: 1.1 }} onClick={handleStart} className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-emerald-500 text-void flex items-center justify-center shadow-2xl transition-all cursor-none">
-                                    <Play className="w-10 h-10 md:w-12 md:h-12 ml-1 md:ml-2" fill="currentColor" />
+                                <motion.button whileHover={{ scale: 1.05 }} onClick={handleStart} className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-neo-green border-3 border-black shadow-neo flex items-center justify-center transition-all hover:bg-green-400">
+                                    <Play className="w-12 h-12 ml-2 text-black" fill="currentColor" />
                                 </motion.button>
                             ) : (
-                                <motion.button whileHover={{ scale: 1.1 }} onClick={handlePause} className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-none">
-                                    <Pause className="w-10 h-10 md:w-12 md:h-12" fill="currentColor" />
+                                <motion.button whileHover={{ scale: 1.05 }} onClick={handlePause} className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-neo-yellow border-3 border-black shadow-neo flex items-center justify-center transition-all hover:bg-yellow-200">
+                                    <Pause className="w-12 h-12 text-black" fill="currentColor" />
                                 </motion.button>
                             )}
-                            <motion.button whileHover={{ scale: 1.2, color: "#a855f7" }} onClick={() => sendPing(roomId, user.uid, user.displayName)} className="p-4 md:p-5 rounded-full bg-white/5 border border-white/10 text-moonstone/40 transition-all cursor-none">
-                                <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
+
+                            <motion.button whileHover={{ rotate: 10, scale: 1.1 }} onClick={() => sendPing(roomId, user.uid, user.displayName)} className="neo-btn bg-neo-purple p-5">
+                                <Sparkles className="w-8 h-8 text-black" />
                             </motion.button>
                         </div>
                     </div>
 
-                    {/* Chat & Assembly */}
-                    <div className="lg:col-span-4 space-y-8 flex flex-col">
+                    {/* Chat & Tasks */}
+                    <div className="lg:col-span-4 space-y-8 flex flex-col pt-4">
                         {/* Custom Timer Slider */}
-                        <div className="enchanted-glass p-8 rounded-[3rem] space-y-8 overflow-hidden relative border-white/5">
+                        <div className="neo-card p-6 bg-white space-y-6">
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-3">
-                                    <TimerIcon className="w-5 h-5" />
-                                    Ancient Time Turner
+                                <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                                    <Clock className="w-5 h-5" />
+                                    Duration
                                 </h3>
-                                <span className="text-xl font-mono text-white bg-black/40 px-4 py-1 rounded-xl">{formatSliderLabel(customMinutes)}</span>
+                                <span className="text-sm font-black bg-neo-blue px-3 py-1 rounded-lg border-2 border-black">{formatSliderLabel(customMinutes)}</span>
                             </div>
                             <div className="space-y-4">
                                 <input
@@ -257,75 +289,73 @@ const Room = () => {
                                     max="720"
                                     value={customMinutes}
                                     onChange={(e) => setCustomMinutes(parseInt(e.target.value))}
-                                    className="w-full h-2 bg-white/5 rounded-lg appearance-none cursor-none accent-emerald-500"
+                                    className="w-full h-4 bg-gray-200 rounded-full appearance-none border-2 border-black accent-black cursor-pointer"
                                 />
-                                <div className="flex justify-between text-[10px] text-moonstone/20 font-bold uppercase tracking-widest">
-                                    <span>1m</span>
-                                    <span>6h</span>
-                                    <span>12h</span>
-                                </div>
+                                <button
+                                    onClick={() => handleSetDuration(customMinutes)}
+                                    className="w-full py-3 bg-black text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all border-2 border-transparent hover:border-black"
+                                >
+                                    Set Interval
+                                </button>
                             </div>
-                            <button
-                                onClick={() => handleSetDuration(customMinutes)}
-                                className="w-full py-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-bold text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-void transition-all cursor-none"
-                            >
-                                Inscribe Duration
-                            </button>
                         </div>
 
                         {/* Live Chatbox */}
-                        <div className="enchanted-glass rounded-[3rem] h-[400px] flex flex-col overflow-hidden relative border-white/5">
-                            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/2">
-                                <div className="flex items-center gap-3">
-                                    <MessageCircle className="w-5 h-5 text-emerald-400" />
-                                    <h3 className="text-xs font-bold uppercase tracking-widest text-white">Live Owl Post</h3>
+                        <div className="neo-card bg-white h-[450px] flex flex-col overflow-hidden p-0">
+                            <div className="p-4 border-b-3 border-black bg-neo-yellow flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                    <Coffee className="w-5 h-5 text-black" />
+                                    <h3 className="text-sm font-black uppercase tracking-widest">Chat Stream</h3>
                                 </div>
-                                <span className="text-[10px] text-moonstone/40 font-mono italic">Realm Channel active</span>
+                                <div className="w-3 h-3 rounded-full bg-green-500 border border-black animate-pulse" />
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={clsx("flex flex-col", msg.senderId === user.uid ? "items-end" : "items-start")}>
-                                        <div className={clsx("max-w-[80%] p-4 rounded-2xl text-xs", msg.senderId === user.uid ? "bg-emerald-500 text-void font-medium rounded-tr-none" : "bg-white/5 text-moonstone rounded-tl-none border border-white/5")}>
-                                            <p className="text-[8px] uppercase tracking-widest opacity-40 mb-1 font-bold">{msg.senderName}</p>
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={i} className={clsx("flex flex-col", msg.senderId === user.uid ? "items-end" : "items-start")}>
+                                        <div className={clsx("max-w-[85%] p-3 rounded-xl text-sm border-2 border-black font-bold shadow-sm", msg.senderId === user.uid ? "bg-neo-blue rounded-tr-none" : "bg-white rounded-tl-none")}>
+                                            <p className="text-[9px] uppercase tracking-wider opacity-60 mb-1">{msg.senderName}</p>
                                             <p>{msg.text}</p>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
                                 <div ref={chatEndRef} />
                             </div>
 
-                            <form onSubmit={handleSendMessage} className="p-6 bg-white/2 border-t border-white/5 flex gap-3">
+                            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t-3 border-black flex gap-2">
                                 <input
                                     value={chatInput}
                                     onChange={(e) => setChatInput(e.target.value)}
-                                    placeholder="Inscribe a message..."
-                                    className="flex-1 bg-black/40 border border-white/10 rounded-2xl px-5 py-3 text-xs text-white outline-none focus:border-emerald-500/50 transition-all cursor-none"
+                                    placeholder="Type a message..."
+                                    className="neo-input flex-1 text-sm py-2"
                                 />
-                                <button type="submit" className="p-3 bg-emerald-500 rounded-xl text-void hover:bg-emerald-400 transition-all cursor-none flex items-center justify-center">
+                                <button type="submit" className="neo-btn bg-black text-white p-2">
                                     <Send className="w-4 h-4" />
                                 </button>
                             </form>
                         </div>
 
-                        {/* Registry of Intent (Minimized/Moved) */}
-                        <div className="enchanted-glass p-8 rounded-[3rem] space-y-4 border-white/5">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-amethyst-400 flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
-                                Guild Tasks
+                        {/* Tasks */}
+                        <div className="neo-card p-6 bg-neo-pink space-y-4">
+                            <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                                <Check className="w-5 h-5" />
+                                Focus Tasks
                             </h3>
                             <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (taskInput.trim()) addTask(roomId, user.uid, user.displayName, taskInput); setTaskInput(''); }}>
-                                <input value={taskInput} onChange={(e) => setTaskInput(e.target.value)} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[10px] text-white outline-none cursor-none" placeholder="Task..." />
-                                <button className="p-2 bg-amethyst-500 rounded-xl text-white cursor-none"><Plus className="w-4 h-4" /></button>
+                                <input value={taskInput} onChange={(e) => setTaskInput(e.target.value)} className="neo-input flex-1 py-2 text-xs" placeholder="Add a task..." />
+                                <button className="neo-btn bg-white p-2"><Plus className="w-5 h-5" /></button>
                             </form>
-                            <div className="max-h-[150px] overflow-y-auto space-y-2">
+                            <div className="max-h-[200px] overflow-y-auto space-y-2 pr-2">
                                 {tasks.map(task => (
-                                    <div key={task.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/2 border border-white/5">
-                                        <button onClick={() => toggleTask(roomId, task.id, !task.completed)} className={clsx("w-4 h-4 rounded-full border flex items-center justify-center cursor-none", task.completed ? "bg-emerald-500 border-emerald-500" : "border-white/20")}>
-                                            {task.completed && <Check className="w-3 h-3 text-void" />}
+                                    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} key={task.id} className="flex items-center gap-3 p-3 rounded-xl bg-white border-2 border-black shadow-sm">
+                                        <button onClick={() => toggleTask(roomId, task.id, !task.completed)} className={clsx("w-6 h-6 rounded border-2 border-black flex items-center justify-center transition-all", task.completed ? "bg-neo-green" : "bg-white")}>
+                                            {task.completed && <Check className="w-4 h-4" />}
                                         </button>
-                                        <span className={clsx("text-[10px]", task.completed && "line-through opacity-30")}>{task.title}</span>
-                                    </div>
+                                        <span className={clsx("text-xs font-bold", task.completed ? "line-through opacity-50" : "text-black")}>{task.title}</span>
+                                        <button onClick={() => deleteTask(roomId, task.id)} className="ml-auto text-red-400 hover:text-red-600">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
