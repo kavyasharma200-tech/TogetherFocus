@@ -7,48 +7,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          light: '#667EEA',
-          DEFAULT: '#764BA2',
-          dark: '#5a3780',
+        neo: {
+          pink: '#ffa8e0',
+          blue: '#a8d5ff',
+          green: '#a8ffb5',
+          yellow: '#fffda8',
+          purple: '#dca8ff',
+          text: '#1a1a1a',
+          bg: '#ffffff'
         },
-        secondary: {
-          light: '#F093FB',
-          DEFAULT: '#F5576C',
-          dark: '#d0455b',
+        pastel: {
+          pink: '#ffe6f2',
+          blue: '#e6f2ff',
+          green: '#e6fff0',
+          yellow: '#ffffe6',
+          purple: '#f2e6ff',
         },
-        accent: {
-          light: '#4FACFE',
-          DEFAULT: '#00F2FE',
-          dark: '#00c4ce',
-        },
-        background: {
-          darkest: '#0F0C29',
-          dark: '#1A1538',
-          light: '#2D2654',
-        }
+        main: '#1a1a1a',
+        muted: '#64748b',
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
-        caveat: ['Caveat', 'cursive'],
-        mono: ['Roboto Mono', 'monospace'],
+        outfit: ['Outfit', 'sans-serif'],
+        quicksand: ['Quicksand', 'sans-serif'],
       },
-      animation: {
-        'float-slow': 'float 6s ease-in-out infinite',
-        'float-medium': 'float 4s ease-in-out infinite',
-        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+      boxShadow: {
+        'neo': '5px 5px 0px 0px #1a1a1a',
+        'neo-sm': '3px 3px 0px 0px #1a1a1a',
+        'neo-lg': '8px 8px 0px 0px #1a1a1a',
       },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        'pulse-glow': {
-          '0%, 100%': { opacity: '1', filter: 'brightness(100%)' },
-          '50%': { opacity: '0.7', filter: 'brightness(130%)' }, 
-        }
+      borderWidth: {
+        '3': '3px',
       }
     },
   },
   plugins: [],
 }
+
+

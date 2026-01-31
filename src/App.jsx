@@ -7,6 +7,7 @@ import Room from './pages/Room';
 import Profile from './pages/Profile';
 import Library from './pages/Library';
 import Settings from './pages/Settings';
+import Onboarding from './pages/Onboarding';
 import ProtectedRoute from './components/ProtectedRoute';
 import useAuthStore from './store/useAuthStore';
 
@@ -52,6 +53,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Library />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <Onboarding />
               </ProtectedRoute>
             }
           />

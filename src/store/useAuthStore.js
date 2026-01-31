@@ -66,6 +66,11 @@ const useAuthStore = create((set, get) => ({
                             totalSessions: 0,
                             currentStreak: 0,
                             longestStreak: 0,
+                            seeds: 5, // Start with 5 seeds
+                            forest: [], // Array of planted trees
+                            xp: 0,
+                            level: 1,
+                            achievements: []
                         };
                         await dbSet(userRef, newProfile);
                         set({ userProfile: newProfile });
@@ -109,6 +114,11 @@ const useAuthStore = create((set, get) => ({
                 totalSessions: 0,
                 currentStreak: 0,
                 longestStreak: 0,
+                seeds: 5,
+                forest: [],
+                xp: 0,
+                level: 1,
+                achievements: []
             };
             await dbSet(userRef, newProfile);
             set({ userProfile: newProfile });
@@ -118,6 +128,7 @@ const useAuthStore = create((set, get) => ({
             throw error;
         }
     },
+
 
     loginWithGoogle: async () => {
         set({ loading: true, error: null });
