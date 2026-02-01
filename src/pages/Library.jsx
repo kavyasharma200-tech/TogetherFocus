@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Book, Library as LibraryIcon, Search, Sparkles, Wand2, ArrowLeft, Clock, Zap, Shield, Flame, Coffee, Heart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import BubbleBackground from '../components/BubbleBackground';
+
 
 const Library = () => {
     const navigate = useNavigate();
